@@ -1,7 +1,7 @@
 <template>
   <header-component @toggleMenu="toggleMenu" :menu-opened="isMenu">
   </header-component>
-  <navigation-panel v-if="menuOpened"/>
+  <navigation-panel v-if="menuOpened" :selectMenu="selectMenuItem" :selected-button="selectedMenuItem"/>
   Контент
 </template>
 
@@ -12,7 +12,8 @@ export default {
   name: "main-view",
   data() {
     return {
-      menuOpened: false
+      menuOpened: false,
+      menuSelectedItem: ''
     }
   },
   components: {
@@ -23,11 +24,18 @@ export default {
     toggleMenu() {
       this.menuOpened = !this.menuOpened
       console.log(this.menuOpened)
+    },
+    selectMenuItem(item) {
+      this.menuSelectedItem = item
+      console.log(item)
     }
   },
   computed: {
     isMenu(){
       return this.menuOpened
+    },
+    selectedMenuItem() {
+      return this.menuSelectedItem
     }
   }
 }
