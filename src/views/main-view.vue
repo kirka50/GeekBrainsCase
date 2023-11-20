@@ -52,5 +52,8 @@ export default {
 <style lang="scss" scoped>
   .main-view__body {
     height: 80vh;
+    min-width: 800px;
+    display: flex;
+    justify-content: center;
   }
 </style>

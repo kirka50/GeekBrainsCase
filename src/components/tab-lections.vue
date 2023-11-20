@@ -1,9 +1,9 @@
 <template>
-  <div class="tab-lections">
+  <div class="tab-lections"
+       @drop="dragDrop">
     <div class="tab-lections__file-upload"
-         @drop="dragDrop"
-         @dragover="this.isDrag = true"
-         @dragleave="this.isDrag = false">
+         @dragover="onDragOver"
+         @dragleave="onDragLeave">
       <div class="file-upload">
         <div v-if="isDrag">
           Бросьте файл сюда
@@ -13,9 +13,10 @@
           <div>
             Или
           </div>
-          <div class="file-upload__upload-button">
-            <input type="file" ref="file" name="file" @change="onChange">
-          </div>
+          <label class="file-upload__upload-button">
+            Загрузите файл
+            <input type="file" ref="file" @change="onChange">
+          </label>
         </div>
       </div>
     </div>
@@ -28,20 +29,28 @@ export default {
   data() {
     return {
       isDrag: false,
-      file: ''
+      myFile: ''
     }
   },
   methods: {
     dragDrop(e) {
+      console.log(e.dataTransfer.files)
       e.preventDefault();
-      this.$refs.file.files = e.dataTransfer.files;
-      this.onChange();
+      this.myFile = e.dataTransfer.files;
       this.isDrag = false;
-      console.log('drop')
+
     },
     onChange() {
-      this.file = this.$refs.file.files;
+      this.myFile = this.$refs.file.files;
     },
+    onDragOver(e) {
+      e.preventDefault()
+      this.isDrag = true
+    },
+    onDragLeave(e) {
+      e.preventDefault()
+      this.isDrag = false
+    }
   },
 
 }
@@ -53,13 +62,14 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-
+  min-height: 300px;
   .tab-lections__file-upload {
     border: dotted gray 1px;
     border-radius: 20px;
     height: 40vh;
     width: 50vh;
-
+    min-height: 300px;
+    min-width: 500px;
     .file-upload {
       gap: 10px;
       display: flex;
@@ -67,7 +77,22 @@ export default {
       justify-content: center;
       align-items: center;
       height: 100%;
-
+      text-align: center;
+      .file-upload__upload-button {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        color: white;
+        border-radius: 20px;
+        background-color: #8D46F6;
+        input[type="file"] {
+          display: none;
+        }
+      }
+      .file-upload__upload-button:hover {
+        background-color: #6404ff;
+      }
     }
   }
 }
