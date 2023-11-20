@@ -1,24 +1,28 @@
 <template>
   <header-component @toggleMenu="toggleMenu" :menu-opened="isMenu">
   </header-component>
-  <navigation-panel v-if="menuOpened" :selectMenu="selectMenuItem" :selected-button="selectedMenuItem"/>
-  Контент
+  <navigation-panel v-if="menuOpened" :selectMenu="selectMenuItem" :selected-button="selectedMenuItem" @toggleMenu="toggleMenu"/>
+  <div class="main-view__body">
+    <component :is="currentTab" class="component"></component>
+  </div>
 </template>
 
 <script>
 import headerComponent from "@/components/header-component";
 import NavigationPanel from "@/components/navigation-panel";
+import tabLections from "@/components/tab-lections";
 export default {
   name: "main-view",
   data() {
     return {
       menuOpened: false,
-      menuSelectedItem: ''
+      menuSelectedItem: 'Lections'
     }
   },
   components: {
     NavigationPanel,
-    headerComponent
+    headerComponent,
+    tabLections
   },
   methods: {
     toggleMenu() {
@@ -36,11 +40,17 @@ export default {
     },
     selectedMenuItem() {
       return this.menuSelectedItem
+    },
+    currentTab(){
+      console.log("tab-" + this.menuSelectedItem.toLocaleLowerCase())
+      return "tab-" + this.menuSelectedItem.toLocaleLowerCase()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .main-view__body {
+    height: 80vh;
+  }
 </style>

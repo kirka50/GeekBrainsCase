@@ -1,6 +1,7 @@
 <template>
-  <div class="nav-panel--overlay">
-    <div class="nav-panel">
+  <div class="nav-panel">
+    <div class="nav-panel--overlay" @click="this.$emit('toggleMenu')"></div>
+    <div class="nav-panel__body">
       <div class="nav-panel__buttons">
         <div :class="[isLection ? 'buttons__button--selected' : 'buttons__button']" @click="selectMenu('Lections')">
           Ввод лекций
@@ -27,8 +28,7 @@ export default {
     selectedButton: {
       type: String,
     },
-    selectMenu: {
-    }
+    selectMenu: {}
   },
   computed: {
     isLection() {
@@ -47,39 +47,47 @@ export default {
       } else return false
     }
   },
-  methods: {
-  },
+  methods: {},
 }
 </script>
 
 <style lang="scss" scoped>
-  .nav-panel--overlay {
-    position: fixed;
-    background: rgba(0,0,0,0.2);
-    height: 100%;
-    width: 100%;
-  }
-  .nav-panel{
-    padding: 0 0 0 20px;
-    border-right: solid 1px #D8D8D8;
-    width: 20vw;
-    height: 100%;
-    background-color: white;
+.nav-panel--overlay {
+  background: rgba(0, 0, 0, 0.2);
+  height: 100%;
+  width: 80%;
+}
+.nav-panel {
+  position: fixed;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  flex-direction: row-reverse;
+}
+.nav-panel__body {
+  padding: 0 0 0 20px;
+  border-right: solid 1px #D8D8D8;
+  width: 20vw;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .nav-panel__buttons {
+    cursor: pointer;
+    gap: 10px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    .nav-panel__buttons{
-      cursor: pointer;
-      gap: 10px;
-      display: flex;
-      flex-direction: column;
-      font-size: 3vh;
-      .buttons__button {
-        color: #9C9FB0;
-      }
-      .buttons__button--selected {
-        color: #8D46F6;
-      }
+    flex-direction: column;
+    font-size: 3vh;
+
+    .buttons__button {
+      color: #9C9FB0;
+    }
+
+    .buttons__button--selected {
+      color: #8D46F6;
     }
   }
+}
 </style>
