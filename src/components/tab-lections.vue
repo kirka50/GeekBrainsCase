@@ -1,4 +1,14 @@
 <template>
+  <div v-if="isLoading">
+    <div class="loading-overlay">
+      <div class="circles-to-rhombuses-spinner">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="tab-lections"
        @drop="dragDrop">
     <div class="tab-lections__file-upload"
@@ -24,12 +34,18 @@
 </template>
 
 <script>
+function delay(milliseconds){
+  return new Promise(resolve => {
+    setTimeout(resolve, milliseconds);
+  });
+}
 export default {
   name: "tab-lections",
   data() {
     return {
       isDrag: false,
-      myFile: ''
+      myFile: '',
+      isLoading: false
     }
   },
   methods: {
@@ -38,7 +54,8 @@ export default {
       e.preventDefault();
       this.myFile = e.dataTransfer.files;
       this.isDrag = false;
-
+      this.isLoading = true
+      delay(5000).then(this.setLoadingFalse)
     },
     onChange() {
       this.myFile = this.$refs.file.files;
@@ -50,6 +67,9 @@ export default {
     onDragLeave(e) {
       e.preventDefault()
       this.isDrag = false
+    },
+    setLoadingFalse() {
+      this.isLoading = false
     }
   },
 
@@ -94,6 +114,81 @@ export default {
         background-color: #6404ff;
       }
     }
+  }
+}
+.circles-to-rhombuses-spinner, .circles-to-rhombuses-spinner * {
+  box-sizing: border-box;
+}
+.loading-overlay {
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.8);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.circles-to-rhombuses-spinner {
+  height: 100vh;
+  width: calc( (15px + 15px * 1.125) * 3);
+  top: 50vh;
+  left: 48vw;
+  display: flex;
+  position: fixed;
+
+}
+
+.circles-to-rhombuses-spinner .circle {
+  height: 15px;
+  width: 15px;
+  margin-left: calc(15px * 1.125);
+  transform: rotate(45deg);
+  border-radius: 10%;
+  border: 3px solid #ff1d5e;
+  overflow: hidden;
+  background: transparent;
+
+  animation: circles-to-rhombuses-animation 1200ms linear infinite;
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(1) {
+  animation-delay: calc(150ms * 1);
+  margin-left: 0
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(2) {
+  animation-delay: calc(150ms * 2);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(3) {
+  animation-delay: calc(150ms * 3);
+}
+
+@keyframes circles-to-rhombuses-animation {
+  0% {
+    border-radius: 10%;
+  }
+
+  17.5% {
+    border-radius: 10%;
+  }
+
+  50% {
+    border-radius: 100%;
+  }
+
+
+  93.5% {
+    border-radius: 10%;
+  }
+
+  100% {
+    border-radius: 10%;
+  }
+}
+
+@keyframes circles-to-rhombuses-background-animation {
+  50% {
+    opacity: 0.4;
   }
 }
 </style>
