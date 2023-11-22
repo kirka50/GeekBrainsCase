@@ -25,7 +25,7 @@
           </div>
           <label class="file-upload__upload-button">
             Загрузите файл
-            <input type="file" ref="file" @change="onChange">
+            <input type="file" ref="file" @change="initFileLoad">
           </label>
         </div>
       </div>
@@ -34,10 +34,16 @@
 </template>
 
 <script>
+import axios from 'axios'
 function delay(milliseconds){
   return new Promise(resolve => {
     setTimeout(resolve, milliseconds);
   });
+}
+function getUUID(fileName) {
+  let result
+  axios.get('/',fileName).then(response => (result = response))
+  return result
 }
 export default {
   name: "tab-lections",
@@ -45,20 +51,14 @@ export default {
     return {
       isDrag: false,
       myFile: '',
-      isLoading: false
+      isLoading: false,
+      fileUUID: ''
     }
   },
   methods: {
     dragDrop(e) {
-      console.log(e.dataTransfer.files)
       e.preventDefault();
-      this.myFile = e.dataTransfer.files;
-      this.isDrag = false;
-      this.isLoading = true
-      delay(5000).then(this.setLoadingFalse)
-    },
-    onChange() {
-      this.myFile = this.$refs.file.files;
+      this.initFileLoad(e)
     },
     onDragOver(e) {
       e.preventDefault()
@@ -70,6 +70,20 @@ export default {
     },
     setLoadingFalse() {
       this.isLoading = false
+    },
+    initFileLoad(e){
+      this.isDrag = false;
+      this.isLoading = true
+      this.myFile = e.dataTransfer.files
+      let fileData = getUUID(e.dataTransfer.files[0].name)
+    },
+    loadFile(e,fileData){
+      axios.post(fileData.upload_url,e.dataTransfer.files)
+          .then(response => console.log('Получилось'))
+      this.startAnalyze(fileData)
+    },
+    startAnalyze(fileData) {
+      axios.post(`/${fileData.id}/start_analyze`).then(response => console.log('анализ'))
     }
   },
 

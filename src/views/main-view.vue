@@ -12,19 +12,22 @@ import headerComponent from "@/components/header-component";
 import NavigationPanel from "@/components/navigation-panel";
 import tabLections from "@/components/tab-lections";
 import tabBase from "@/components/tab-base";
+import tabFileview from "@/components/tab-fileview";
+
 export default {
   name: "main-view",
   data() {
     return {
       menuOpened: false,
-      menuSelectedItem: 'Base'
+      menuSelectedItem: 'fileview'
     }
   },
   components: {
     NavigationPanel,
     headerComponent,
     tabLections,
-    tabBase
+    tabBase,
+    tabFileview
   },
   methods: {
     toggleMenu() {

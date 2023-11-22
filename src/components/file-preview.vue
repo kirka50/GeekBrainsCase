@@ -17,6 +17,7 @@ export default {
 
 <style lang="scss" scoped>
   .file-preview {
+    cursor: pointer;
     .file-preview__title {
       img {
         height: 200px;
