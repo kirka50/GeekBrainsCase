@@ -1,10 +1,28 @@
 <template>
   <div v-if="isLoading">
-    <div class="loading-overlay">
-      <div class="circles-to-rhombuses-spinner">
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
+    <div v-if="error">
+      <v-overlay v-model="error" @click="this.error = false;
+              this.isLoading = false; this.$refs.file.value=null;">
+        <v-card>
+          <h1>
+            Произошла какая то ошибка, возможно сервер не отвечает, попробуйте позже
+          </h1>
+          <v-card-actions>
+            <v-btn @click="this.error = false;
+              this.isLoading = false; this.$refs.file.value=null;">
+              Закрыть
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-overlay>
+    </div>
+    <div v-else>
+      <div class="loading-overlay">
+        <div class="circles-to-rhombuses-spinner">
+          <div class="circle"></div>
+          <div class="circle"></div>
+          <div class="circle"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -19,13 +37,13 @@
           Бросьте файл сюда
         </div>
         <div v-else>
-          Я и есть загрузка файлов кста
+         Для загрузки перетащите файл внутрь пунктирной рамки
           <div>
             Или
           </div>
           <label class="file-upload__upload-button">
             Загрузите файл
-            <input type="file" ref="file" @change="initFileLoad">
+            <input type="file" ref="file" @change="initFileButtonLoad">
           </label>
         </div>
       </div>
@@ -34,16 +52,23 @@
 </template>
 
 <script>
+/* eslint-disable */
 import axios from 'axios'
-function delay(milliseconds){
-  return new Promise(resolve => {
-    setTimeout(resolve, milliseconds);
-  });
-}
-function getUUID(fileName) {
-  let result
-  axios.get('/',fileName).then(response => (result = response))
-  return result
+import FrontConf from '../Front.json'
+async function postLecture(fileName) {
+  console.log(fileName)
+  return await axios.post(
+      `${FrontConf.domain}v1/lectures/`,
+      {
+        'filename': fileName
+      },
+      {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+  )
 }
 export default {
   name: "tab-lections",
@@ -52,13 +77,17 @@ export default {
       isDrag: false,
       myFile: '',
       isLoading: false,
-      fileUUID: ''
+      fileUUID: '',
+      error: false
     }
+  },
+  props: {
+    selectMenu: {},
   },
   methods: {
     dragDrop(e) {
       e.preventDefault();
-      this.initFileLoad(e)
+      this.initFileDropLoad(e)
     },
     onDragOver(e) {
       e.preventDefault()
@@ -71,26 +100,74 @@ export default {
     setLoadingFalse() {
       this.isLoading = false
     },
-    initFileLoad(e){
+    initFileDropLoad(e){
       this.isDrag = false;
       this.isLoading = true
       this.myFile = e.dataTransfer.files
-      let fileData = getUUID(e.dataTransfer.files[0].name)
+      console.log(this.myFile)
+      postLecture(this.myFile[0].name).then(response => {
+        console.log('Лекция есть' + response.data)
+        this.loadFile(response.data)
+      })
     },
-    loadFile(e,fileData){
-      axios.post(fileData.upload_url,e.dataTransfer.files)
-          .then(response => console.log('Получилось'))
-      this.startAnalyze(fileData)
+    initFileButtonLoad(){
+      this.isDrag = false;
+      this.isLoading = true
+      this.onChange()
+      console.log(this.myFile)
+      postLecture(this.myFile[0].name).then(response => {
+        console.log('Лекция есть', response.data)
+        //this.error = true
+        this.loadFile(response.data)
+      }).catch(reason => {this.error = true
+      console.log('Ошибка старта')})
+    },
+    onChange(){
+      this.myFile = this.$refs.file.files
+    },
+    loadFile(fileData){
+      //let data = new FormData()
+      //data.append("file", this.myFile[0])
+      console.log(this.myFile[0])
+      fetch(fileData.upload_url, {method: 'PUT', body:this.myFile[0]})
+          .then(response => {
+            console.log('Получилось')
+            this.startAnalyze(fileData)
+          })
+          .catch(reason => {this.error = true
+            console.log('Ошибка загрузки', reason)})
+
     },
     startAnalyze(fileData) {
-      axios.post(`/${fileData.id}/start_analyze`).then(response => console.log('анализ'))
+      axios.post(`${FrontConf.domain}v1/lectures/${fileData.id}/start_analyze/`)
+          .then(response => {
+            console.log('анализ')
+            this.setLoadingFalse()
+            this.switchToBase()
+          })
+          .catch(reason => {this.error = true
+            console.log('Ошибка анализа')})
+    },
+    switchToBase() {
+      this.selectMenu('Base')
     }
+
   },
+
 
 }
 </script>
 
 <style lang="scss" scoped>
+.v-overlay {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .v-card {
+    padding: 20px;
+  }
+}
 .tab-lections {
   display: flex;
   justify-content: center;

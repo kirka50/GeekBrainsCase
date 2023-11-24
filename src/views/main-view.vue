@@ -1,9 +1,20 @@
 <template>
-  <header-component @toggleMenu="toggleMenu" :menu-opened="isMenu">
+  <header-component @toggleMenu="toggleMenu" :menu-opened="isMenu" :selected-menu-item="menuSelectedItem">
   </header-component>
-  <navigation-panel v-if="menuOpened" :selectMenu="selectMenuItem" :selected-button="selectedMenuItem" @toggleMenu="toggleMenu"/>
+  <navigation-panel v-if="menuOpened"
+                    :selectMenu="selectMenuItem"
+                    :selected-button="selectedMenuItem"
+                    :file-id="currentFileId"
+                    @scroll.prevent
+                    @wheel.prevent
+                    @toggleMenu="toggleMenu" />
   <div class="main-view__body">
-    <component :is="currentTab" class="component"></component>
+    <component :is="currentTab"
+               class="component"
+               :selectMenu="selectMenuItem"
+               :selectFileId="selectFileId"
+               :fileId="currentFileId"
+    ></component>
   </div>
 </template>
 
@@ -13,13 +24,18 @@ import NavigationPanel from "@/components/navigation-panel";
 import tabLections from "@/components/tab-lections";
 import tabBase from "@/components/tab-base";
 import tabFileview from "@/components/tab-fileview";
+import tabSettings from "@/components/file-settings";
+import tabTestfileview from "@/components/tab-testfileview";
+
+
 
 export default {
   name: "main-view",
   data() {
     return {
       menuOpened: false,
-      menuSelectedItem: 'fileview'
+      menuSelectedItem: '',
+      currentFileId: {}
     }
   },
   components: {
@@ -27,7 +43,9 @@ export default {
     headerComponent,
     tabLections,
     tabBase,
-    tabFileview
+    tabFileview,
+    tabSettings,
+    tabTestfileview
   },
   methods: {
     toggleMenu() {
@@ -36,7 +54,12 @@ export default {
     },
     selectMenuItem(item) {
       this.menuSelectedItem = item
+      localStorage.menuItem = item
       console.log(item)
+    },
+    selectFileId(id){ // Занести id файла в кэш
+      this.currentFileId = id
+      localStorage.fileId = id
     }
   },
   computed: {
@@ -49,6 +72,23 @@ export default {
     currentTab(){
       console.log("tab-" + this.menuSelectedItem.toLocaleLowerCase())
       return "tab-" + this.menuSelectedItem.toLocaleLowerCase()
+    },
+  },
+  mounted() {
+    localStorage.menuItem = 'testfileview' // Тестовые
+    if (localStorage.menuItem) {
+      this.menuSelectedItem = localStorage.menuItem
+    }
+    if (localStorage.fileId) {
+      this.currentFileId = localStorage.fileId
+    } else if (localStorage.menuItem == 'fileview') {
+      this.menuSelectedItem = 'Lection'
+    }
+  },
+  watch:{
+    item(newItem)
+    {
+      localStorage.menuItem = newItem
     }
   }
 }

@@ -38,14 +38,17 @@
         </audio-player>
       </div>
       <div class="uppper-section__transcr" >
-        <div class="uppper-section__transcr__element" v-for="i in testData.timestamps" :key="i">
-          <time-stamp-text :file-text="i"></time-stamp-text>
+        <div class="uppper-section__transcr__element" v-for="i in text.chunks" :key="i">
+          <time-stamp-text-test :file-text="i" :gloss="this.gloss" :selected-termi="selectedTermin"></time-stamp-text-test>
         </div>
       </div>
     </div>
     <div class="tab-fileview__down-section">
       <div class="down-section__glos">
-        Тут глоссарий
+        <div v-for="i in gloss" :key="i">
+          <gloss-component :oneGloss="i" :hightlight-termin="hightlightTermin" :selected-termi="selectedTermin">
+          </gloss-component>
+        </div>
       </div>
       <div class="down-section__consp">
         Тут конспект
@@ -59,12 +62,14 @@
 import axios from "axios";
 import AudioPlayer from 'vue3-audio-player'
 import 'vue3-audio-player/dist/style.css'
-import TimeStampText from "@/components/time-stamp-text";
+import TimeStampTextTest from "@/components/time-stamp-text-test";
 import timeTestStamp from "@/assets/testData.json";
 import textTrans from "@/components/text-trans";
-//import { AudioPlayer, VideoPlayer } from 'vue-md-player';
-import 'vue-md-player/dist/style.css';
-import FrontConf from '/src/Front.json'
+//import { AudioPlayer, VideoPlayer } from 'vue-md-player'
+import gloss from "@/assets/gloss.json"
+import text from "@/assets/text.json"
+import glossComponent from "@/components/gloss-component";
+import FrontConf from "/src/Front.json"
 export default {
   name: "tab-fileview",
   computed: {
@@ -73,6 +78,9 @@ export default {
     return {
       testData: '',
       error: false,
+      gloss: gloss,
+      text: text,
+      selectedTermin: ''
     }
   },
   props: {
@@ -91,14 +99,18 @@ export default {
     backToBase() {
       this.selectFileId('')
       this.selectMenu('Base')
+    },
+    hightlightTermin(termin) {
+      this.selectedTermin = termin
     }
   },
   components: {
-    TimeStampText,
+    TimeStampTextTest,
     AudioPlayer,
-    textTrans
+    textTrans,
+    glossComponent
   },
-  beforeCreate() {
+  /*beforeCreate() {
     console.log(this.fileId)
     axios.get(`${FrontConf.domain}v1/lectures/${this.fileId}/`).then(
         response => {
@@ -110,7 +122,7 @@ export default {
           console.log('Ошибка загрузки')
           this.error = true
         })
-  }
+  }*/
 }
 </script>
 
@@ -175,7 +187,9 @@ export default {
         border: #D8D8D8 solid;
         border-radius: 20px;
         width: 800px;
+        height: 500px;
         padding: 10px;
+        overflow-y: scroll;
       }
       .down-section__consp {
         height: 500px;

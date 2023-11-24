@@ -12,7 +12,12 @@
       </div>
       <div class="body__right-side">
         <div class="right-side__help-ico">
-          <img :src="require('@/assets/help-ico.svg')" alt="11">
+          <v-tooltip :text="hintText">
+            <template v-slot:activator="{ props }" >
+              <div class="time-stamp-text__text--mod" v-bind="props"> <img :src="require('@/assets/help-ico.svg')" alt="11"></div>
+            </template>
+          </v-tooltip>
+
         </div>
       </div>
     </div>
@@ -31,6 +36,33 @@ export default {
       type: Boolean,
       default: false
     },
+    selectedMenuItem() {
+      return String;
+    }
+  },
+  computed: {
+    hintText() {
+      let text = ''
+      if (this.selectedMenuItem == 'Base') {
+        text = 'Это вкладка со всеми загруженными вами лекциями. ' +
+            'Тут появляются лекции которые вы загрузили. ' +
+            'Если вы видите серую рамку и вращающийся кружочек внутри, значит лекция ещё грузится. ' +
+            'По фиолетовой рамке можно нажать и перейти на страничку лекции. '
+      }
+      if (this.selectedMenuItem == 'Lections') {
+        text = 'Это вкладка для загрузки лекций. ' +
+            'Тут вы можете загрузить ваши аудиофайлы лекций. ' +
+            'Нажмите на кнопку "Загрузите файл" что бы перейти в контенстное меню загрузки. ' +
+            'Или перетащие свой файл внутри пунктирной рамки. '
+      }
+      if (this.selectedMenuItem == 'fileview') {
+        text = 'Это страничка вашей лекции. ' +
+            'Тут вы можете просматривать текс обнаруженный в аудиофале. ' +
+            'Вы можете увидеть таймкоды участка текста, для этого наведите курсор на текст. ' +
+            'Так же во можете прослушать аудиофайл в специальном окне слева. '
+      }
+      return text
+    }
   },
 }
 </script>

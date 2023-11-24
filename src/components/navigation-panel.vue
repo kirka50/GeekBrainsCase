@@ -28,7 +28,10 @@ export default {
     selectedButton: {
       type: String,
     },
-    selectMenu: {}
+    selectMenu: {},
+    fileId: {
+      type: String
+    }
   },
   computed: {
     isLection() {
@@ -62,6 +65,7 @@ export default {
   display: flex;
   height: 100vh;
   width: 100%;
+  z-index: 10;
   flex-direction: row-reverse;
 }
 .nav-panel__body {
