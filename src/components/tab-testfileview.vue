@@ -61,9 +61,8 @@
           Глоассарий не загружен
         </div>
 
-        <div class="down-section__glos__add-button" v-if="testData.terms != ''">
-          <img :src="require('@/assets/icons8-plus.svg')" style="cursor:pointer;">
-          <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" >
+        <div class="down-section__glos__add-button" v-if="testData.terms">
+          <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" @click="download" >
         </div>
       </div>
       <div class="down-section__consp">
@@ -127,6 +126,19 @@ export default {
         }
       }
     },
+    download() {
+      let text = JSON.stringify(this.testData.terms);
+      let filename = 'export.json';
+      let element = document.createElement('a');
+      element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+      document.body.removeChild(element);
+  },
     backToBase() {
       this.selectFileId('')
       this.selectMenu('Base')
