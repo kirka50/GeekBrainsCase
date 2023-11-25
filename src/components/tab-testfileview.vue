@@ -66,8 +66,12 @@
         </div>
       </div>
       <div class="down-section__consp">
-        <div v-if="testData.summary">
+        <div v-if="testData.summary" style="display: flex; flex-direction: column ">
           {{testData.summary}}
+          <div style="display: flex; flex-direction: column; align-items: center">
+            <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" @click="download1" >
+          </div>
+
         </div>
         <div v-else style="display: flex; justify-content: center">
           Конспектр не загружен
@@ -139,6 +143,19 @@ export default {
       element.click();
       document.body.removeChild(element);
   },
+    download1() {
+      let text = JSON.stringify(this.testData.summary);
+      let filename = 'conspect.txt';
+      let element = document.createElement('a');
+      element.setAttribute('href', 'data:application/txt;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+      document.body.removeChild(element);
+    },
     backToBase() {
       this.selectFileId('')
       this.selectMenu('Base')
