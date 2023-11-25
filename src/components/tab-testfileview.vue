@@ -39,19 +39,38 @@
       </div>
       <div class="uppper-section__transcr" >
         <div class="uppper-section__transcr__element" v-for="i in text.chunks" :key="i">
-          <time-stamp-text-test :file-text="i" :gloss="this.gloss" :selected-termi="selectedTermin"></time-stamp-text-test>
+          <time-stamp-text-test :file-text="i" :gloss="testData.terms" :selected-termi="selectedTermin"></time-stamp-text-test>
         </div>
       </div>
     </div>
     <div class="tab-fileview__down-section">
       <div class="down-section__glos">
-        <div v-for="i in gloss" :key="i">
-          <gloss-component :oneGloss="i" :hightlight-termin="hightlightTermin" :selected-termi="selectedTermin">
-          </gloss-component>
+        <div v-if="testData.terms != ''">
+          <div v-for="i in testData.terms" :key="i">
+            <gloss-component
+                :oneGloss="i"
+                :hightlight-termin="hightlightTermin"
+                :deleteGlossTerm="deleteGlossTerm"
+                :selected-termi="selectedTermin">
+            </gloss-component>
+          </div>
+        </div>
+        <div v-else style="display: flex; justify-content: center">
+          Глоассарий не загружен
+        </div>
+
+        <div class="down-section__glos__add-button" v-if="testData.terms != ''">
+          <img :src="require('@/assets/icons8-plus.svg')" style="cursor:pointer;">
+          <img :src="require('@/assets/Download_ico.png')" height="40" width="40" style="cursor:pointer;" >
         </div>
       </div>
       <div class="down-section__consp">
-        Тут конспект
+        <div v-if="testData.summary">
+          {{testData.summary}}
+        </div>
+        <div v-else style="display: flex; justify-content: center">
+          Конспектр не загружен
+        </div>
       </div>
     </div>
   </div>
@@ -69,9 +88,10 @@ import textTrans from "@/components/text-trans";
 import gloss from "@/assets/gloss.json"
 import text from "@/assets/text.json"
 import glossComponent from "@/components/gloss-component";
-import FrontConf from "/src/Front.json"
+import FrontConf from "/src/Front.json";
+
 export default {
-  name: "tab-fileview",
+  name: "tab-testfileview",
   computed: {
   },
   data() {
@@ -91,11 +111,20 @@ export default {
     fileId: {
     },
     selectedMenu: {
+    },
 
-    }
   },
 
   methods: {
+    deleteGlossTerm(termin) {
+      for (let i in this.testData.terms) {
+        if (this.testData.terms[i].term == termin) {
+          console.log(this.testData.terms[i])
+          this.testData.terms.splice(i,1)
+          console.log(this.testData.terms[i])
+        }
+      }
+    },
     backToBase() {
       this.selectFileId('')
       this.selectMenu('Base')
@@ -108,9 +137,9 @@ export default {
     TimeStampTextTest,
     AudioPlayer,
     textTrans,
-    glossComponent
+    glossComponent,
   },
-  /*beforeCreate() {
+  beforeCreate() {
     console.log(this.fileId)
     axios.get(`${FrontConf.domain}v1/lectures/${this.fileId}/`).then(
         response => {
@@ -122,7 +151,7 @@ export default {
           console.log('Ошибка загрузки')
           this.error = true
         })
-  }*/
+  }
 }
 </script>
 
@@ -190,6 +219,11 @@ export default {
         height: 500px;
         padding: 10px;
         overflow-y: scroll;
+        .down-section__glos__add-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
       .down-section__consp {
         height: 500px;

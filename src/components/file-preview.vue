@@ -12,7 +12,7 @@
         <v-progress-circular indeterminate :size="64"></v-progress-circular>
       </div>
     </div>
-    <div class="file-preview__name" @click="setFile">
+    <div class="file-preview__name">
       {{file.filename}}
     </div>
   </div>
@@ -27,7 +27,7 @@ export default {
       this.moveToFile()
     },
     moveToFile(){
-      this.selectMenu('fileview')
+      this.selectMenu('testfileview')
     }
   },
   props: {

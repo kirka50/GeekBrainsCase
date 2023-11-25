@@ -20,6 +20,7 @@
 <script>
 import filePreview from "@/components/file-preview";
 import axios from "axios";
+import FrontConf from "/src/Front.json"
 export default {
 
   name: "tab-base",
@@ -38,7 +39,7 @@ export default {
   },
   beforeCreate() {
     this.loading = true
-    axios.get('https://geekbrains.sosus.org/v1/lectures/', {
+    axios.get(`${FrontConf.domain}v1/lectures/`, {
       headers: {
         'accept': 'application/json'
       }})
@@ -51,21 +52,21 @@ export default {
           this.loading = false
         })
         .catch(reason => {
-          console.log('Ошибка загрузки', reason)
+          console.log('Ошибка загрузки 1 base', reason)
         })
   },
   methods: {
     checkStatus() {
       for (let i in this.lecturesList) {
         if (this.lecturesList[i].status != 'Processed') {
-          axios.get(`https://geekbrains.sosus.org/v1/lectures/${this.lecturesList[i].id}/status/`)
+          axios.get(`${FrontConf.domain}v1/lectures/${this.lecturesList[i].id}/status/`)
               .then(response => {
                 if (response.data.status == 'Processed') {
                   this.changeStatusById(this.lecturesList[i].id)
                 }
               })
               .catch(reason => {
-                console.log('Ошибка загрузки', reason)
+                console.log('Ошибка загрузки 2 base', reason)
               })
         }
       }
@@ -78,14 +79,14 @@ export default {
       }
     },
     updateList() {
-      axios.get('https://geekbrains.sosus.org/v1/lectures/', {
+      axios.get(`${FrontConf.domain}v1/lectures/`, {
         headers: {
           'accept': 'application/json'
         }}).then(response => {
           this.lecturesList = response.data
       })
           .catch(reason => {
-            console.log('Ошибка загрузки', reason)
+            console.log('Ошибка загрузки 3 base', reason)
           })
     }
   },

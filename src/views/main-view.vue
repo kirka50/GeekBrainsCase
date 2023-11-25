@@ -27,8 +27,6 @@ import tabFileview from "@/components/tab-fileview";
 import tabSettings from "@/components/file-settings";
 import tabTestfileview from "@/components/tab-testfileview";
 
-
-
 export default {
   name: "main-view",
   data() {
@@ -75,14 +73,12 @@ export default {
     },
   },
   mounted() {
-    localStorage.menuItem = 'testfileview' // Тестовые
+    //localStorage.menuItem = 'fileview' // Тестовые
     if (localStorage.menuItem) {
       this.menuSelectedItem = localStorage.menuItem
     }
     if (localStorage.fileId) {
       this.currentFileId = localStorage.fileId
-    } else if (localStorage.menuItem == 'fileview') {
-      this.menuSelectedItem = 'Lection'
     }
   },
   watch:{
