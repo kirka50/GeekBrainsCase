@@ -46,7 +46,9 @@ export default {
 <style lang="scss" scoped>
   .file-preview {
     cursor: pointer;
-
+  .file-preview__name {
+    width: 355px;
+  }
     .file-preview__title {
       height: 200px;
       width: 355px;
