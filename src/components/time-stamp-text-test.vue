@@ -43,28 +43,35 @@ export default {
   computed: {
     ifInGlossTimeStamp() {
       for (let i in this.gloss) {
-        if ((this.fileText.timestamp[0] > this.gloss[i].start) && (this.fileText.timestamp[1] < this.gloss[i].end)) {
-          console.log(this.gloss[i])
-          console.log(this.fileText.timestamp[0] + ' ' + this.gloss[i].start, this.fileText.timestamp[1] + ' ' + this.gloss[i].end,)
+        if ((this.fileText.timestamp[0] >= this.gloss[i].start_timestamp) && (this.fileText.timestamp[1] <= this.gloss[i].end_timestamp)) {
+          console.log('Таки сработало и тут', this.gloss[i], this.gloss[i].term)
+          console.log(this.fileText.timestamp[0] + ' ' + this.gloss[i].start_timestamp, this.fileText.timestamp[1] + ' ' + this.gloss[i].end_timestamp,)
           return true
         }
       }
       return false
     },
     isTerminCorrect() {
+      //console.log('Сравниваю ', this.terminName, this.selectedTermi)
       if (this.terminName == this.selectedTermi){
+        //console.log('Выбрал ' + this.selectedTermi)
         return true
       } return false
     }
   },
   mounted() {
     for (let i in this.gloss) {
-      if ((this.fileText.timestamp[0] > this.gloss[i].start) && (this.fileText.timestamp[1] < this.gloss[i].end)) {
-        console.log(this.gloss[i])
-        console.log(this.fileText.timestamp[0] + ' ' + this.gloss[i].start, this.fileText.timestamp[1] + ' ' + this.gloss[i].end,)
+      console.log('Сравниваю исхондный 1 ' + this.fileText.timestamp[0] + ' = ' + this.gloss[i].start_timestamp)
+      console.log('Сравниваю исхондный 2 ' + this.fileText.timestamp[1] + ' = ' + this.gloss[i].end_timestamp)
+      console.log('сам массив ' + this.gloss[i])
+      if ((this.fileText.timestamp[0] >= this.gloss[i].start_timestamp) && (this.fileText.timestamp[1] <= this.gloss[i].end_timestamp)) {
+        console.log('Таки сработало', this.gloss[i], this.gloss[i].term)
+        console.log(this.fileText.timestamp[0] + ' ' + this.gloss[i].start_timestamp, this.fileText.timestamp[1] + ' ' + this.gloss[i].end_timestamp,)
         this.terminName = this.gloss[i].term
+
       }
     }
+
   }, methods: {
     hightlightTermin() {
 
@@ -111,7 +118,6 @@ export default {
       justify-content: left;
       align-items: flex-start;
       .time-stamp-text__text--mod--chip {
-
 
         width: 100%;
         v-chip {

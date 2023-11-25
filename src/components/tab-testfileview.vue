@@ -38,8 +38,10 @@
         </audio-player>
       </div>
       <div class="uppper-section__transcr" >
-        <div class="uppper-section__transcr__element" v-for="i in text.chunks" :key="i">
-          <time-stamp-text-test :file-text="i" :gloss="testData.terms" :selected-termi="selectedTermin"></time-stamp-text-test>
+        <div class="uppper-section__transcr__element" v-for="i in testData.timestamps" :key="i">
+          <time-stamp-text-test :file-text="i" :gloss="testData.terms" :selected-termi="selectedTermin">
+
+          </time-stamp-text-test>
         </div>
       </div>
     </div>
@@ -131,6 +133,7 @@ export default {
     },
     hightlightTermin(termin) {
       this.selectedTermin = termin
+      console.log('Термин = ', termin)
     }
   },
   components: {
@@ -231,6 +234,7 @@ export default {
         border-radius: 20px;
         width: 800px;
         padding: 10px;
+        overflow: scroll;
       }
     }
     .tab-fileview__back-button{
